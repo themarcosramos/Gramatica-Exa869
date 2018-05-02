@@ -1,0 +1,22 @@
+﻿! Welcome to GOLD Parser Builder 5.2
+
+! -------------------------------------------------
+! Terminals
+! -------------------------------------------------
+
+id    = {Letter}({AlphaNumeric} | '_')*
+StringLiteral = '"' ( {String Chars} | '\' {Printable} )* '"'
+Numero = '-'?{space}*{Digit}{Digit}*
+
+
+
+           
+
+         
+! Tipos de Variáveis
+         
+<tipo>::= 'int'|'float'|'bool'|'string'   
+! Declaracao de variavel
+<declara_var>::= <tipo>id<declara_var_aux>
+<declara_var_aux>::= ','id<declara_var_aux>|;
+              
