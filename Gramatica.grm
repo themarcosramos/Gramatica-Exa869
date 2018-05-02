@@ -1,0 +1,38 @@
+"Name"    = 'Gramatica PBL Compiladores'
+"Author"  = 'Turma P01 - Compiladores'
+"Version" = ''
+! -------------------------------------------------          
+!                       General purpose variables
+! -------------------------------------------------
+
+!{Letter} = [a-z][A-Z]
+!{Number} = [0-9]
+{NoZeroNumber} = [123456789]
+
+               
+! -------------------------------------------------
+!                          Comment Delimiters
+! -------------------------------------------------
+
+Comment Start = '/*'
+Comment End = '*/'
+Comment Line = '//'
+             
+! -------------------------------------------------
+!                             All Elements
+! -------------------------------------------------
+
+IntegerNumber = {Number}{Number}*
+String = '"'({Letter} | {Whitespace})* '"'
+
+"Case Sensitive" = 'True'
+"Start Symbol"   = <MainInput>
+                 
+! -------------------------------------------------                 
+!                        Transitions define code
+! -------------------------------------------------
+
+<MainInput> ::=     
+
+
+
