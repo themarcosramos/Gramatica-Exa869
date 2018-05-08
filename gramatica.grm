@@ -6,17 +6,26 @@
 
 id    = {Letter}({AlphaNumeric} | '_')*
 StringLiteral = '"' ( {String Chars} | '\' {Printable} )* '"'
-Numero = '-'?{space}*{Digit}{Digit}*
+numero = '-'?{space}*{Digit}{Digit}*
+valor = {id | numero}
 
 
 
            
 
          
-! Tipos de Variáveis
+! declaracao Variáveis, constantes, matrizes e vetores
          
-<tipo>::= 'int'|'float'|'bool'|'string'   
-! Declaracao de variavel
-<declara_var>::= <tipo>id<declara_var_aux>
-<declara_var_aux>::= ','id<declara_var_aux>|;
+<tipo> ::= 'int'|'float'|'bool'|'string'         
+<declara_var> ::= <tipo> id <declara_var_aux>
+<declara_var_aux> ::= ','id <declara_var_aux> | '['numero']' <declara_var_aux> | '['numero']' '['numero']' <declara_var_aux> | ';' | <declara_var>
+
+<declara_const> ::= <tipo> id '=' valor <declara_consta_aux>
+<declara_const_aux> ::= ',' id '=' valor <declara_const_aux> | ';' | <declara_const>
+                     
+<bloco_var> ::= 'var' '{' <declara_var> '}'
+             
+<bloco_const> ::= 'const' '{' <declara_const> '}'
+               
+<bloco> ::= <bloco_var> |  <bloco_const>
               
