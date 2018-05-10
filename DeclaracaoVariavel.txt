@@ -1,0 +1,4 @@
+var {int nome2[nome],nome[3][4];float nom4[10][2];int ab};
+const {int nome2;float nom4[10][2]};
+var {int nome2[nome];float nom4[10][2];int ab};
+const {int nome[3][4];float nom4[10];int ab};
