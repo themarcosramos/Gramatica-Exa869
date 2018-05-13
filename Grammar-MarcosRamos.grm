@@ -1,0 +1,153 @@
+﻿! Welcome to GOLD Parser Builder 5.2
+
+"Name"    = 'Gramatica PBL Compiladores'
+"Author"  = 'Turma P01 - Compiladores'
+"Version" = ''
+          
+"Case Sensitive" = True
+"Start Symbol" = <Program>
+
+! -------------------------------------------------
+! Conjuntos de Caracteres
+! -------------------------------------------------
+
+{homeIdentificador} = {Letter}
+{bodyDoIdentificador}       = {Alphanumeric} + [_]
+
+! -------------------------------------------------
+! Símbolos Terminais
+! -------------------------------------------------
+Identificador      = {homeIdentificador}{bodyDoIdentificador}*
+numero = ('-')?{Number}+('.'{Number}+)?
+Caracter  = '"' ({Letter}|{Number}|'\"'| {Space} |'!' | '"' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+'| ',' | '-' |'.' | '/' | '/' | ':' | ';' | '<' | '>' | '=' | '?' | '@' | '[' | ']' | '\' | '^' | '_' | '`'  | '{' | '|' | '}' | '~')* '"'
+String = '"'({Letter} | {Whitespace})* '"'
+      
+
+
+<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'function' <Id_Funcao> '(' ')'  '{'<instrucao> ';''}'
+
+<Declaracao_Procedimento> ::= 'procedure' <Id_Proced> '('  <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'procedure'<Id_Proced>  '(' ')' '{'<instrucao> ';''}'
+
+<DeclaracoesGlobais> ::= <Declaracoes_variaveis>
+                      |<Declaracao_constantes>
+                      
+<Declaracao_Inicio>     ::= 'start' '(' ')'<comandos> 
+                         
+<instrucao>::= '{' <comandos> '}'
+            |'{' '}'
+           
+<Id_Funcao>::= <TipoPrimitivo> Identificador
+            
+<Id_Proced> ::= Identificador
+             
+<Lista_Parametros>   ::= <Parametro>
+                   | <Parametro>',' ','<Lista_Parametros> 
+                   
+<Parametro>::=  <Declaracoes_variaveis>
+            |<Declaracao_constantes>
+            
+
+<Program>    ::= <lista_instrucao>
+                
+<lista_instrucao>::=  <Declaracoes_variaveis> 
+                  | <Declaracao_constantes>
+                  | <Declaracao_Procedimento>
+                  | <Declaracao_Inicio>  
+                  | <Declaracao_Funcao>      
+                  
+<comandos>::= <codigos>
+            |<codigos> <comandos>
+            
+<codigos>::= <codigos_normais>
+          
+<codigos_normais>::= <Expressao> ';' 
+                  |<codigos_retornos>
+                            
+                  
+<codigos_retornos>::= 'return' ';'
+                   |'return' <Expressao> ';'
+                   
+<TipoPrimitivo>::='int'
+            |'float'
+            |'bool'
+            |'string'
+
+<Id_struct>::= 'struct' Identificador   
+                    
+<bloco_variavel>::= <Id_struct> '{'<Declaracoes_variaveis> '}' ';'
+                 
+<Id_Novo>::= 'typedef'Identificador
+                 
+<NovoTipo>::= <Id_Novo>'struct''{'<Declaracoes_variaveis>  '}'';'
+                  
+<Acesso_struct> ::= <Id_struct> '.'<Declaracoes_variaveis>'='<valor>
+                 
+<Declaracoes_variaveis> ::= 'var' '{'<conteudo_variavel> '}'';'  
+                         
+<conteudo_variavel> ::= <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador 
+                     | <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador ',' <TipoPrimitivo> Identificador',' 
+                     | <TipoPrimitivo> Identificador
+                         
+<Declaracao_constantes>::='const''{'<conteudo_variavel>'}'';'  
+                        
+<Acesso>        ::= '.' Identificador
+                | '[' <Valor> ']' 
+                
+<Valor> ::= Identificador '(' <Expressao> ')' 
+            | Identificador '(' ')'
+            | Identificador 
+            | '(' <Expressao> ')'
+            
+<Expressao>   ::= <Atribuicao> ',' <Expressao> 
+                | <Atribuicao> 
+
+<Id_Expressao> 
+         ::= Identificador
+         
+<Id_Expressao> 
+          ::= <Id_Expressao>  ';' 
+          |  <Id_Expressao>  ',' <Id_Expressao> 
+          
+<Atribuicao>  ::= <Final> '=' <Adicao>
+                        | Identificador '=' <Adicao>
+                        | <Adicao>
+                        
+!acho  que a operações a seguir  tem recuvidades  se possivél da um olhada 
+<Adicao> ::= <Adicao> '+' <Mult> 
+               | <Adicao> '-' <Mult>
+               | <Mult>
+
+<Mult>    ::= <Mult> '*' <OpUnary> 
+               | <Mult> '/' <unario>
+               | <unario>
+
+<unario>  ::= '!' <unario>
+            | '++' <unario>
+            | '--' <unario>
+            | <Final>
+            | <Valor>
+
+<Final>     ::= Identificador <Acessando> 
+
+<Acessando>        ::= <Acesso> | <Acesso> <Acessando> 
+                    
+
+<comando> ::= <comandoIf> <comando> | <comandoWhile> <comando> | <comandoScan> <comando> | <comandoPrint> <comando> | 'return' <Expressao> ';' <comando> | 
+<codigos_retornos> ::= <comandoIfReturn> <codigos_retornos> | <comandoWhileReturn> <codigos_retornos> | <comandoScan> <codigos_retornos>| <comandoPrint> <codigos_retornos>|  'return' <Expressao> ';' <codigos_retornos>| 
+<comandoIf> ::= 'if' '(' <Expressao>  ')' 'then' '{' <comando> '}' <comandoElse>
+<comandoElse> ::= 'else' '{' <comando> '}' | 
+<comandoWhile>::= 'while' '(' <Expressao> ')' '{'  <comando> '}'
+<comandoIfReturn> ::= 'if' '(' <Expressao> ')' 'then' '{' <codigos_retornos> '}' <comandoElse>
+<comandoElseReturn> ::= 'else' '{'<codigos_retornos>'}' | 
+<comandoWhileReturn> ::= 'while' '(' <Expressao>')' '{' <codigos_retornos> '}'
+<comandoScan> ::= 'scan' '('<ListaId>')' ';'
+<comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';'
+                
+<ListaId>::= <Expressao> 
+          
+<ListaExepressao>::=<Expressao>
+
+
+                        
