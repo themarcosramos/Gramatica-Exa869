@@ -1,4 +1,3 @@
-﻿
 "Name"    = 'Declaração de variaveis'
 "Version" = '1.0 beta'
 "Author"  = 'Ianc Samac'
@@ -12,14 +11,8 @@ numero ='-'?{number}+ ('.'{number}+)?
 
 "Start Symbol" = <GramarStart>
 
-<GramarStart> ::= <DeclaracaoVariavel>
+<GramarStart> ::= <Comandos>
 
-!Declaração de Variaveis
-<DeclaracaoVariavel> ::= <Origem> '{' <Tipo> id <Array>
-
-<Array> ::= '['numero']'
-         |<DeclarouVariavel> 
-                             
 <Origem> ::= 'var'
            | 'const'                      
 <Tipo>   ::= 'int'
@@ -27,5 +20,22 @@ numero ='-'?{number}+ ('.'{number}+)?
            | 'double'
            | 'String'
 
-<DeclarouVariavel> ::= '}'';'
-                         
+!Declaração de Variaveis
+<DeclaracaoVariavel> ::= <Origem> '{' <Variaveis>
+       <Variaveis> ::= <Tipo> <Variavel>
+                    | <TipoTypdef> <Variavel>
+       <Variavel>::= id <Array>
+              <Array> ::= '['numero']' <Matriz>
+                       | '['id']' <Matriz>
+                       |<DeclarouVariavel> 
+                   <Matriz> ::= '['numero']' <DeclarouVariavel>
+                             | '['id']' <DeclarouVariavel>
+                             |<DeclarouVariavel> 
+                           <DeclarouVariavel> ::= ',' <Variavel>
+                                    | <Declarado>    
+                                   <Declarado> ::= ';' <Variaveis>
+                                        | <VariaveisDeclaradas>
+                                        <VariaveisDeclaradas> ::= '}'';' 
+<Comandos> ::= <DeclaracaoVariavel> <Comandos>
+            |
+<TipoTypdef>::= id
