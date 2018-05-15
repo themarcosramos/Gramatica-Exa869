@@ -1,0 +1,41 @@
+"Name"    = 'Declaração de variaveis'
+"Version" = '1.0 beta'
+"Author"  = 'Ianc Samac'
+
+
+"Case Sensitive" = 'True'
+
+
+id ={Letter}+ '_'? ({number}+)?
+numero ='-'?{number}+ ('.'{number}+)?
+
+"Start Symbol" = <GramarStart>
+
+<GramarStart> ::= <Comandos>
+
+<Origem> ::= 'var'
+           | 'const'                      
+<Tipo>   ::= 'int'
+           | 'float'
+           | 'double'
+           | 'String'
+
+!Declaração de Variaveis
+<DeclaracaoVariavel> ::= <Origem> '{' <Variaveis>
+       <Variaveis> ::= <Tipo> <Variavel>
+                    | <TipoTypdef> <Variavel>
+       <Variavel>::= id <Array>
+              <Array> ::= '['numero']' <Matriz>
+                       | '['id']' <Matriz>
+                       |<DeclarouVariavel> 
+                   <Matriz> ::= '['numero']' <DeclarouVariavel>
+                             | '['id']' <DeclarouVariavel>
+                             |<DeclarouVariavel> 
+                           <DeclarouVariavel> ::= ',' <Variavel>
+                                    | <Declarado>    
+                                   <Declarado> ::= ';' <Variaveis>
+                                        | <VariaveisDeclaradas>
+                                        <VariaveisDeclaradas> ::= '}'';' 
+<Comandos> ::= <DeclaracaoVariavel> <Comandos>
+            |
+<TipoTypdef>::= id

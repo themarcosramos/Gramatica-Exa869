@@ -9,11 +9,8 @@ StringLiteral = '"' ( {String Chars} | '\' {Printable} )* '"'
 numero = '-'?{space}*{Digit}{Digit}*
 valor = {id | numero}
 
-
-
-           
-
-         
+Id_acesso =  {Letter}({Alphanumeric}|'_')* | {Letter}({Alphanumeric}|'_')* '['{Digit}+']' | {Letter}({Alphanumeric}|'_')* '['{Digit}+']''['{Digit}+']'  
+      
 ! declaracao Variáveis, constantes, matrizes e vetores
          
 <tipo> ::= 'int'|'float'|'bool'|'string'         
@@ -28,4 +25,16 @@ valor = {id | numero}
 <bloco_const> ::= 'const' '{' <declara_const> '}'
                
 <bloco> ::= <bloco_var> |  <bloco_const>
+         
+!----- PRINT -------!                                    
+<cmd_Print> ::= 'print' '(' <print_access> ')' ';'       
+<print_access> ::= StringLiteral <print_aux> | Id_acesso <print_aux>  
+<print_aux> ::= ',' StringLiteral <print_aux> | ',' Id_acesso <print_aux> |                
+
+!----- SCAN -------!
+<cmd_Scan> ::= 'scan' '(' Id_acesso <var_access>')' ';' 
+<var_access> ::= ',' Id_acesso <var_access> |
+                
+!----- WHILE -------!                  
+<cmd_While> ::= 'while' '('<expressoes>')' '{'<statements>'}'              
               

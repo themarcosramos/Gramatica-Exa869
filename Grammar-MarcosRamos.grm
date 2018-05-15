@@ -1,0 +1,151 @@
+﻿! Welcome to GOLD Parser Builder 5.2
+"Name"    = 'Gramatica PBL Compiladores'
+"Author"  = 'Turma P01 - Compiladores'
+"Version" = ''
+          
+"Case Sensitive" = True
+"Start Symbol" = <Program>
+
+! -------------------------------------------------
+! Conjuntos de Caracteres
+! -------------------------------------------------
+
+{homeIdentificador} = {Letter}
+{bodyDoIdentificador}       = {Alphanumeric} + [_]
+
+! -------------------------------------------------
+! Símbolos Terminais
+! -------------------------------------------------
+Identificador      = {homeIdentificador}{bodyDoIdentificador}*
+numero = ('-')?{Number}+('.'{Number}+)?
+Caracter  = '"' ({Letter}|{Number}|'\"'| {Space} |'!' | '"' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+'| ',' | '-' |'.' | '/' | '/' | ':' | ';' | '<' | '>' | '=' | '?' | '@' | '[' | ']' | '\' | '^' | '_' | '`'  | '{' | '|' | '}' | '~')* '"'
+String = '"'({Letter} | {Whitespace})* '"'
+      
+
+
+<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'function' <Id_Funcao> '(' ')'  '{'<instrucao> ';''}'
+
+<Declaracao_Procedimento> ::= 'procedure' <Id_Proced> '('  <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'procedure'<Id_Proced>  '(' ')' '{'<instrucao> ';''}'
+
+<DeclaracoesGlobais> ::= <Declaracoes_variaveis>
+                      |<Declaracao_constantes>
+                      
+<Declaracao_Inicio>     ::= 'start' '(' ')'<comandos> 
+                         
+<instrucao>::= '{' <comandos> '}'
+            |'{' '}'
+           
+<Id_Funcao>::= <TipoPrimitivo> Identificador
+            
+<Id_Proced> ::= Identificador
+             
+<Lista_Parametros>   ::= <Parametro>
+                   | <Parametro>','<Lista_Parametros> 
+                   
+<Parametro>::=  <Declaracoes_variaveis>
+            |<Declaracao_constantes>
+            
+
+<Program>    ::= <lista_instrucao>
+                
+<lista_instrucao>::=  <Declaracoes_variaveis> 
+                  | <Declaracao_constantes>
+                  | <Declaracao_Procedimento>
+                  | <Declaracao_Inicio>  
+                  | <Declaracao_Funcao> 
+                  | <comandos>  
+                  | <codigosPrimitivos>
+                  
+                  
+<comandos> ::= <comandoIf>| <comandoWhile> | <comandoScan> | <comandoPrint> | 'return' <Expressao> ';' | 
+<comandosRetornos> ::= <comandoIfReturn> | <comandoWhileReturn> | <comandoScan> | <comandoPrint>|  'return' <Expressao> ';'| 
+<comandoIf> ::= 'if' '(' <Expressao>  ')' 'then' '{' <comandos> '}' <comandoElse>
+<comandoElse> ::= 'else' '{' <comandos> '}' | 
+<comandoWhile>::= 'while' '(' <Expressao> ')' '{'  <comandos> '}'
+<comandoIfReturn> ::= 'if' '(' <Expressao> ')' 'then' '{' <comandosRetornos> '}' <comandoElse>
+<comandoElseReturn> ::= 'else' '{'<comandosRetornos>'}' | 
+<comandoWhileReturn> ::= 'while' '(' <Expressao>')' '{' <comandosRetornos> '}'
+<comandoScan> ::= 'scan' '('<ListaId>')' ';'
+<comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';'    
+<comandoArry> ::= <Declaracoes_variaveis>'['numero']'';'
+<comandoMatriz>::= <Declaracoes_variaveis>'['numero']''['numero']' ';'         
+                
+<Expressao>::=<Expressao_Aritimetica> 
+            |<Expressao_Boolean>
+            |<Expressao_Multiplicao>
+            |<Expressao_Divisao>
+            |<Expressao_Incremento>
+            |<Expressao_Decremento>
+            
+<Expressao_Aritimetica> ::= <Declaracoes_variaveis>'=' <Declaracoes_variaveis> '+'<Declaracoes_variaveis> ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-'<Declaracoes_variaveis> ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-''('<Expressao_Multiplicao>')' ';'
+                         | <Declaracoes_variaveis>'=''('<Expressao_Multiplicao>')''-'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'=''('<Expressao_Multiplicao>')''+'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '+''('<Expressao_Multiplicao>')' ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-''('<Expressao_Divisao>')' ';'
+                         | <Declaracoes_variaveis>'=''('<Expressao_Divisao>')''-'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'=''('<Expressao_Divisao>')''+'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '+''('<Expressao_Divisao>')' ';'
+                         
+<Expressao_Multiplicao>::= <Declaracoes_variaveis>'='<Declaracoes_variaveis>'*'<Declaracoes_variaveis>
+                        
+<Expressao_Divisao>::= <Declaracoes_variaveis>'='<Declaracoes_variaveis>'/'<Declaracoes_variaveis>
+                    
+<Expressao_Incremento>::=<Declaracoes_variaveis>'++'';'
+                       |<Declaracoes_variaveis>'=''+'<Declaracoes_variaveis>';'
+                       
+<Expressao_Decremento>::=<Declaracoes_variaveis>'--'';'
+                       |<Declaracoes_variaveis>'=''-'<Declaracoes_variaveis> ';'  
+
+                    
+<Acesso>::= <Declaracoes_variaveis>'.'<conteudo_variavel>'=' <valor> ';'
+         
+<valor>::= <Expressao>
+          |  numero  
+          |  
+          
+<Expressao_Boolean>::= <Declaracoes_variaveis>'=='<Declaracoes_variaveis>';'
+                    | <Declaracoes_variaveis>'!='<Declaracoes_variaveis>';'     
+                    
+<ListaId>::=<Acesso>
+          |
+
+<ListaExepressao>::= <Expressao> 
+           |<Expressao> ','<Expressao>  
+           |<Expressao> ','<Expressao>','<Expressao> 
+           |<comandosReturn>   
+           
+<comandosReturn> ::= <codigos_retornos>    
+                               
+<codigos_retornos>::= 'return' ';'
+                   |'return' <Expressao> ';'
+                   
+<TipoPrimitivo>::='int'
+            |'float'
+            |'bool'
+            |'string'
+
+<Id_struct>::= 'struct' Identificador   
+                    
+<bloco_variavel>::= <Id_struct> '{'<Declaracoes_variaveis> '}' ';'
+                 
+<Id_Novo>::= 'typedef'Identificador
+                 
+<NovoTipo>::= <Id_Novo>'struct''{'<Declaracoes_variaveis> '}'';'
+                  
+<Acesso_struct> ::= <Id_struct> '.'<Declaracoes_variaveis>'='<valor>
+                 
+<Declaracoes_variaveis> ::= 'var' '{'<conteudo_variavel> '}'';'  
+                         
+<conteudo_variavel> ::= <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador 
+                     | <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador ',' <TipoPrimitivo> Identificador',' 
+                     | <TipoPrimitivo> Identificador
+                         
+<Declaracao_constantes>::='const''{'<conteudo_variavel>'}'';'  
+                        
+<codigosPrimitivos>::= <Id_struct>
+                     | <Acesso> 
+                     | <bloco_variavel>   
