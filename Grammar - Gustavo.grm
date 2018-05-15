@@ -17,9 +17,7 @@ StrLiteral = '"' ({Printable}|'\"')* '"'
 !----- PRINT -------!                                                          
 <cmd_Print> ::= 'print' '(' <print_access> ')' ';'       
 <print_access> ::= StrLiteral <print_aux> | Id_acesso <print_aux>  
-<print_aux> ::= ',' StrLiteral <print_aux> | ',' Id_acesso <print_aux> |      
-!<cmd_Print> ::= 'print' '(' StrLiteral <print_aux> | Id_acesso <print_aux> ')' ';'        
-!<print_aux> ::= ',' StrLiteral <print_aux> | ',' Id_acesso <print_aux> |                
+<print_aux> ::= ',' <print_access> |                 
 
 !----- SCAN -------!
 <cmd_Scan> ::= 'scan' '(' Id_acesso <var_access>')' ';' 
