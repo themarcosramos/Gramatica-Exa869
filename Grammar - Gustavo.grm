@@ -1,0 +1,28 @@
+! Welcome to GOLD Parser Builder 5.2
+"Name" = 'Grammar'
+"Author" = 'Gustavo Boanerges'
+"Case Sensitive" = 'True'
+"Start Symbol" = <Grammar>
+               
+Id_acesso =  {Letter}({Alphanumeric}|'_')* | {Letter}({Alphanumeric}|'_')* '['{Digit}+']' | {Letter}({Alphanumeric}|'_')* '['{Digit}+']''['{Digit}+']'  
+StrLiteral = '"' ({Printable}|'\"')* '"'          
+
+!----- WHILE -------!                  
+!<cmd_While> ::= 'while' '('<expressoes>')' '{'<comandos>'}'
+
+!----- IF -------!     
+!<cmd_If> ::= 'if' '('<expressoes>')' 'then' '{'<comandos>'}' <else>
+!<else> ::= 'else' '{'<comandos>'}' |         
+              
+!----- PRINT -------!                                                          
+<cmd_Print> ::= 'print' '(' <print_access> ')' ';'       
+<print_access> ::= StrLiteral <print_aux> | Id_acesso <print_aux>  
+<print_aux> ::= ',' StrLiteral <print_aux> | ',' Id_acesso <print_aux> |      
+!<cmd_Print> ::= 'print' '(' StrLiteral <print_aux> | Id_acesso <print_aux> ')' ';'        
+!<print_aux> ::= ',' StrLiteral <print_aux> | ',' Id_acesso <print_aux> |                
+
+!----- SCAN -------!
+<cmd_Scan> ::= 'scan' '(' Id_acesso <var_access>')' ';' 
+<var_access> ::= ',' Id_acesso <var_access> |
+              
+<Grammar> ::= <cmd_Print><Grammar> | <cmd_Scan><Grammar> |           

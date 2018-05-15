@@ -1,0 +1,4 @@
+print (a[1], y[2][9]);
+print ("teste ,.;~-=[]{}", lvl_110);
+print (abc_d55, "cadeia caracteres");
+scan (a, b[1], c[2][9]);
