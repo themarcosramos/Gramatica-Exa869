@@ -1,4 +1,4 @@
-"Name"    = 'Gramatica PBL Compiladores'
+﻿"Name"    = 'Gramatica PBL Compiladores'
 "Author"  = 'Turma P01 - Compiladores'
 "Version" = ''
 ! -------------------------------------------------          
@@ -7,6 +7,7 @@
 
 !{Letter} = [a-z][A-Z]
 !{Number} = [0-9]
+{AlphaNumeric} = {Letter} + {Number}
 {NoZeroNumber} = [123456789]
 
                
@@ -22,17 +23,44 @@ Comment Line = '//'
 !                             All Elements
 ! -------------------------------------------------
 
-IntegerNumber = {Number}{Number}*
-String = '"'({Letter} | {Whitespace})* '"'
+id    = '_'? {Letter} ( {AlphaNumeric} | '_')*
+integerNumber = '-'?{Whitespace}*{Number}{Number}*
+string = '"'({Letter} | {Whitespace} | '\' {Printable})* '"'
+boolean = 'true' | 'false'
+tipo = 'int'|'float'|'bool'|'string'
+tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
 
 "Case Sensitive" = 'True'
-"Start Symbol"   = <MainInput>
+"Start Symbol"   = <Main_input>
                  
 ! -------------------------------------------------                 
 !                        Transitions define code
 ! -------------------------------------------------
 
-<MainInput> ::=     
 
+<Main_input> ::= <Variable>
 
+! Estruturas auxiliares
+<Define_var> ::= tipo id | tipo id <Define_var> | ';' tipo id <Define_var> | tipo id tamanho_vet_mat <Define_var> | ';' tipo id tamanho_vet_mat <Define_var> |
+<Extends> ::= 'extends' id
+<Return> ::= 'return' id | 'return' integerNumber |  'return' floatNumber | 'return' string | 'return' boolean
+!<Method_scope> ::=
+!<Logic_operation> ::=
+!<Aritmetic_operation> ::=
+!<Relational_operation> ::=
+<Identifier> ::= 'int' | 'float'
+            
+! Armazenamento de dados (Variável, Sctruct, Const, Typedef)
+<Variable> ::= 'var' '{' <Define_var> '}'
+<Struct> ::= 'struct' id '{' <Variavel> '}'| 'struct' id '{' <Variavel> <Extends> '}'   
+<Const> ::= 'const' '{' <Define_var> '}'
+<TypeDef> ::= 'typedef' id '{' <Struct> '}'
+           
+!Atuadores (Funções e procedimentos)
+<Function> ::= 'function' tipo '(' <Parameters> ')' '{'  <Return> '}'
+<Procedure> ::= 'procedure' '(' <Parameters> ')' '{' <Return> '}'
+            
+!Condicional Procediments]
 
+!<While> ::=
+!<Conditional> ::==
