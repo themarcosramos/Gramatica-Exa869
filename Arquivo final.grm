@@ -67,8 +67,6 @@ integerNumber = '-'?{Whitespace}*{Number}{Number}*
              
 
 
-
-
 !
 ! coisas para eu ir analisando
 !
@@ -173,18 +171,18 @@ Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'
       
 
 
-<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
-                        | 'function' <Id_Funcao> '(' ')'  '{'<instrucao> ';''}'
+!<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
+!                        | 'function' <Id_Funcao> '(' ')'  '{'<instrucao> ';''}'
 
-<Declaracao_Procedimento> ::= 'procedure' <Id_Proced> '('  <Lista_Parametros> ')' '{'<instrucao> ';''}'
-                        | 'procedure'<Id_Proced>  '(' ')' '{'<instrucao> ';''}'
+!<Declaracao_Procedimento> ::= 'procedure' <Id_Proced> '('  <Lista_Parametros> ')' '{'<instrucao> ';''}'
+!                        | 'procedure'<Id_Proced>  '(' ')' '{'<instrucao> ';''}'
 
 <DeclaracoesGlobais> ::= <Declaracoes_variaveis>
                       |<Declaracao_constantes>
                       
-<Declaracao_Inicio>     ::= 'start' '(' ')'<comandos> 
+<Declaracao_Inicio>     ::= 'start' '(' ')'<Comandos> 
                          
-<instrucao>::= '{' <comandos> '}'
+<instrucao>::= '{' <Comandos> '}'
             |'{' '}'
            
 <Id_Funcao>::= <TipoPrimitivo> Identificador
@@ -196,32 +194,41 @@ Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'
                    
 <Parametro>::=  <Declaracoes_variaveis>
             |<Declaracao_constantes>
-            
+           
 
 <Program>    ::= <lista_instrucao>
                 
 <lista_instrucao>::=  <Declaracoes_variaveis> 
                   | <Declaracao_constantes>
-                  | <Declaracao_Procedimento>
+                  !| <Declaracao_Procedimento>
                   | <Declaracao_Inicio>  
-                  | <Declaracao_Funcao> 
-                  | <comandos>  
-                  | <codigosPrimitivos>
-                  
-                  
-!<comandos> ::= <comandoIf>| <comandoWhile> | <comandoScan> | <comandoPrint> | 'return' <Expressao> ';' | 
-<comandosRetornos> ::= <comandoIfReturn> | <comandoWhileReturn> | <comandoScan> | <comandoPrint>|  'return' <Expressao> ';'| 
-<comandoIf> ::= 'if' '(' <Expressao>  ')' 'then' '{' <comandos> '}' <comandoElse>
-<comandoElse> ::= 'else' '{' <comandos> '}' | 
-<comandoWhile>::= 'while' '(' <Expressao> ')' '{'  <comandos> '}'
-<comandoIfReturn> ::= 'if' '(' <Expressao> ')' 'then' '{' <comandosRetornos> '}' <comandoElse>
-<comandoElseReturn> ::= 'else' '{'<comandosRetornos>'}' | 
-<comandoWhileReturn> ::= 'while' '(' <Expressao>')' '{' <comandosRetornos> '}'
+                  !| <Declaracao_Funcao> 
+                  | <Comandos>  
+                  | <codigosPrimitivos>                          
+
+!produção de comandos já adaptando as outras produções  que já estão na gramática  e usando  o que discutindo em sessão ,
+! contudo ao fazer isso acho que tem   ambiguidde  tem com conferir ai?
+<Comandos> ::= <ComandoIf> <Comando_Aux> | <ComandoWhile> <Comando_Aux>| <ComandoScan> <Comando_Aux> | <ComandoPrint> <Comando_Aux>  | 'return' <Expressao>';' <Comando_Aux>  | 
+<comandosRetornos> ::= <ComandoIfRetornos> <comandosRetornos> | <ComandoWhileRetornos> <comandosRetornos> | <ComandoScan> <comandosRetornos> 
+                    | <ComandoPrint> <comandosRetornos> |'return' <Expressao> ';' <comandosRetornos> | 
+                    
+<ComandoIf> ::= 'if' '(' <Expressao> ')' 'then' '{' <Comandos> '}' <ComandoElse>
+<ComandoElse> ::= 'else' '{' <Comandos> '}' | 
+<ComandoWhile> ::= 'while' '('<Expressao> ')' '{'  <Comandos> '}'
+<ComandoIfRetornos> ::= 'if' '(' <Expressao> ')' 'then' '{' <comandosRetornos> '}' <ComandoElse>
+<ComandoWhileRetornos> ::= 'while' '(' <Expressao> ')' '{' <comandosRetornos> '}'
 <comandoScan> ::= 'scan' '('<ListaId>')' ';'
-<comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';'    
-<comandoArry> ::= <Declaracoes_variaveis>'['numero']'';'
-<comandoMatriz>::= <Declaracoes_variaveis>'['numero']''['numero']' ';'         
-                
+<comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';' 
+                   
+<comandoArry> ::= '['numero']' <Matriz> | '['id']' <Matriz>
+               |<DeclarouVariavel> 
+               
+<comandoMatriz>::='['numero']' <DeclarouVariavel>| '['id']' <DeclarouVariavel>
+                  |<DeclarouVariavel> 
+    
+
+<Comando_Aux> ::= <Comandos> 
+                       
 <Expressao>::=<Expressao_Aritimetica> 
             |<Expressao_Boolean>
             |<Expressao_Multiplicao>
