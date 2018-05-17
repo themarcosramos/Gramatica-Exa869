@@ -1,0 +1,315 @@
+﻿!
+! Propriedades
+!
+
+"Name"    = 'Problema 2'
+"Version" = '1.0'
+"Author"  = 'Gabriel, Gustavo, Ianc, Marcos, Joimar, Victor'
+
+"Case Sensitive" = 'True'
+                 
+
+{ID Head} = {Letter} + [_]
+{ID Tail} = {Letter} + [_] + {Digit}
+
+Id = {ID Head}{ID Tail}*
+   
+numero = '-'?{Whitespace}*{number}+ ('.'{number}+)?
+
+StringLiteral = '"'({Letter} | {Whitespace} | '\' {Printable})* '"'
+              
+integerNumber = '-'?{Whitespace}*{Number}{Number}*
+
+       
+
+<Origem> ::= 'var'
+           | 'const'   
+                              
+<Tipo>   ::= 'int'
+           | 'float'
+           | 'double'
+           | 'String'
+
+
+!========================
+! Declaração de variáveis
+!========================
+
+
+           
+<DeclaracaoVariavel> ::= <Origem> '{' <Variaveis>
+                      
+
+<Variaveis> ::= <Tipo> <Variavel>
+             | <TipoTypdef> <Variavel>
+       
+<Variavel>::= id <Array>
+
+
+<Array> ::= '['numero']' <Matriz>
+         | '['id']' <Matriz>
+         |<DeclarouVariavel> 
+
+<Matriz> ::= '['numero']' <DeclarouVariavel>
+          | '['id']' <DeclarouVariavel>
+          |<DeclarouVariavel> 
+
+<DeclarouVariavel> ::= ',' <Variavel>
+                    | <Declarado>    
+
+<Declarado> ::= ';' <Variaveis>
+             | <VariaveisDeclaradas>
+
+<VariaveisDeclaradas> ::= '}'';' 
+<Comandos> ::= <DeclaracaoVariavel> <Comandos>
+            |
+<TipoTypdef>::= id
+             
+
+
+
+
+!
+! coisas para eu ir analisando
+!
+
+
+
+! ----------------
+! Miranda
+! ----------------
+
+
+! -------------------------------------------------          
+!                       General purpose variables
+! -------------------------------------------------
+
+!{Letter} = [a-z][A-Z]
+!{Number} = [0-9]
+{NoZeroNumber} = [123456789]
+
+               
+! -------------------------------------------------
+!                          Comment Delimiters
+! -------------------------------------------------
+
+Comment Start = '/*'
+Comment End = '*/'
+Comment Line = '//'
+             
+! -------------------------------------------------
+!                             All Elements
+! -------------------------------------------------
+   
+
+boolean = 'true' | 'false'
+tipo = 'int'|'float'|'bool'|'string'
+tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
+
+! -------------------------------------------------                 
+!                        Transitions define code
+! -------------------------------------------------
+
+
+! Estruturas auxiliares
+<Define_var> ::= tipo id 
+              | tipo id <Define_var> 
+              | ';' tipo id <Define_var> 
+              | tipo id tamanho_vet_mat <Define_var> 
+              | ';' tipo id tamanho_vet_mat <Define_var> 
+              |
+
+<Extends> ::= 'extends' id
+
+<Return> ::= 'return' id 
+          | 'return' integerNumber 
+          |  'return' floatNumber 
+          | 'return' string 
+          | 'return' boolean
+
+!<Method_scope> ::=
+!<Logic_operation> ::=
+!<Aritmetic_operation> ::=
+!<Relational_operation> ::=
+<Identifier> ::= 'int' | 'float'
+            
+! Armazenamento de dados (Variável, Sctruct, Const, Typedef)
+<Variable> ::= 'var' '{' <Define_var> '}'
+
+<Struct> ::= 'struct' id '{' <Variavel> '}'| 'struct' id '{' <Variavel> <Extends> '}'   
+
+<Const> ::= 'const' '{' <Define_var> '}'
+
+<TypeDef> ::= 'typedef' id '{' <Struct> '}'
+           
+!Atuadores (Funções e procedimentos)
+<Function> ::= 'function' tipo '(' <Lista_Parametros> ')' '{'  <Return> '}'
+
+<Procedure> ::= 'procedure' '(' <Lista_Parametros> ')' '{' <Return> '}'
+            
+
+
+
+! =======
+
+               
+Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'  
+        
+              
+!----- PRINT -------!                                                          
+<cmd_Print> ::= 'print' '(' <print_access> ')' ';'       
+<print_access> ::= StringLiteral <print_aux> | Id_acesso <print_aux>  
+<print_aux> ::= ',' <print_access> |                 
+
+!----- SCAN -------!
+<cmd_Scan> ::= 'scan' '(' Id_acesso <var_access>')' ';' 
+<var_access> ::= ',' Id_acesso <var_access> |
+              
+<Grammar> ::= <cmd_Print><Grammar> | <cmd_Scan><Grammar> |           
+           
+
+
+! =========================
+      
+
+
+<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'function' <Id_Funcao> '(' ')'  '{'<instrucao> ';''}'
+
+<Declaracao_Procedimento> ::= 'procedure' <Id_Proced> '('  <Lista_Parametros> ')' '{'<instrucao> ';''}'
+                        | 'procedure'<Id_Proced>  '(' ')' '{'<instrucao> ';''}'
+
+<DeclaracoesGlobais> ::= <Declaracoes_variaveis>
+                      |<Declaracao_constantes>
+                      
+<Declaracao_Inicio>     ::= 'start' '(' ')'<comandos> 
+                         
+<instrucao>::= '{' <comandos> '}'
+            |'{' '}'
+           
+<Id_Funcao>::= <TipoPrimitivo> Identificador
+            
+<Id_Proced> ::= Identificador
+             
+<Lista_Parametros>   ::= <Parametro>
+                   | <Parametro>','<Lista_Parametros> 
+                   
+<Parametro>::=  <Declaracoes_variaveis>
+            |<Declaracao_constantes>
+            
+
+<Program>    ::= <lista_instrucao>
+                
+<lista_instrucao>::=  <Declaracoes_variaveis> 
+                  | <Declaracao_constantes>
+                  | <Declaracao_Procedimento>
+                  | <Declaracao_Inicio>  
+                  | <Declaracao_Funcao> 
+                  | <comandos>  
+                  | <codigosPrimitivos>
+                  
+                  
+!<comandos> ::= <comandoIf>| <comandoWhile> | <comandoScan> | <comandoPrint> | 'return' <Expressao> ';' | 
+<comandosRetornos> ::= <comandoIfReturn> | <comandoWhileReturn> | <comandoScan> | <comandoPrint>|  'return' <Expressao> ';'| 
+<comandoIf> ::= 'if' '(' <Expressao>  ')' 'then' '{' <comandos> '}' <comandoElse>
+<comandoElse> ::= 'else' '{' <comandos> '}' | 
+<comandoWhile>::= 'while' '(' <Expressao> ')' '{'  <comandos> '}'
+<comandoIfReturn> ::= 'if' '(' <Expressao> ')' 'then' '{' <comandosRetornos> '}' <comandoElse>
+<comandoElseReturn> ::= 'else' '{'<comandosRetornos>'}' | 
+<comandoWhileReturn> ::= 'while' '(' <Expressao>')' '{' <comandosRetornos> '}'
+<comandoScan> ::= 'scan' '('<ListaId>')' ';'
+<comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';'    
+<comandoArry> ::= <Declaracoes_variaveis>'['numero']'';'
+<comandoMatriz>::= <Declaracoes_variaveis>'['numero']''['numero']' ';'         
+                
+<Expressao>::=<Expressao_Aritimetica> 
+            |<Expressao_Boolean>
+            |<Expressao_Multiplicao>
+            |<Expressao_Divisao>
+            |<Expressao_Incremento>
+            |<Expressao_Decremento>
+            
+<Expressao_Aritimetica> ::= <Declaracoes_variaveis>'='<Declaracoes_variaveis> '+'<Declaracoes_variaveis> ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-'<Declaracoes_variaveis> ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-''('<Expressao_Multiplicao>')' ';'
+                         | <Declaracoes_variaveis>'=''('<Expressao_Multiplicao>')''-'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'=''('<Expressao_Multiplicao>')''+'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '+''('<Expressao_Multiplicao>')' ';'
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '-''('<Expressao_Divisao>')' ';'
+                         | <Declaracoes_variaveis>'=''('<Expressao_Divisao>')''-'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'=''('<Expressao_Divisao>')''+'<Declaracoes_variaveis> ';' 
+                         | <Declaracoes_variaveis>'='<Declaracoes_variaveis> '+''('<Expressao_Divisao>')' ';'
+                         
+<Expressao_Multiplicao>::= <Declaracoes_variaveis>'='<Declaracoes_variaveis>'*'<Declaracoes_variaveis>
+                        
+<Expressao_Divisao>::= <Declaracoes_variaveis>'='<Declaracoes_variaveis>'/'<Declaracoes_variaveis>
+                    
+<Expressao_Incremento>::=<Declaracoes_variaveis>'++'';'
+                       |<Declaracoes_variaveis>'=''+'<Declaracoes_variaveis>';'
+                       
+<Expressao_Decremento>::=<Declaracoes_variaveis>'--'';'
+                       |<Declaracoes_variaveis>'=''-'<Declaracoes_variaveis> ';'  
+
+                    
+<Acesso>::= <Declaracoes_variaveis>'.'<conteudo_variavel>'=' <valor> ';'
+         
+<valor>::= <Expressao>
+          |  numero  
+          |  
+          
+<Expressao_Boolean>::= <Declaracoes_variaveis>'=='<Declaracoes_variaveis>';'
+                    | <Declaracoes_variaveis>'!='<Declaracoes_variaveis>';'     
+                    
+<ListaId>::=<Acesso>
+          |
+
+<ListaExepressao>::= <Expressao> 
+           |<Expressao> ','<Expressao>  
+           |<Expressao> ','<Expressao>','<Expressao> 
+           |<comandosReturn>   
+           
+<comandosReturn> ::= <codigos_retornos>    
+                               
+<codigos_retornos>::= 'return' ';'
+                   |'return' <Expressao> ';'
+                   
+<TipoPrimitivo>::='int'
+            |'float'
+            |'bool'
+            |'string'
+
+<Id_struct>::= 'struct' Identificador   
+                    
+<bloco_variavel>::= <Id_struct> '{'<Declaracoes_variaveis> '}' ';'
+                 
+<Id_Novo>::= 'typedef'Identificador
+                 
+<NovoTipo>::= <Id_Novo>'struct''{'<Declaracoes_variaveis> '}'';'
+                  
+<Acesso_struct> ::= <Id_struct> '.'<Declaracoes_variaveis>'='<valor>
+                 
+<Declaracoes_variaveis> ::= 'var' '{'<conteudo_variavel> '}'';'  
+                         
+<conteudo_variavel> ::= <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador 
+                     | <TipoPrimitivo> Identificador',' <TipoPrimitivo> Identificador ',' <TipoPrimitivo> Identificador',' 
+                     | <TipoPrimitivo> Identificador
+                         
+<Declaracao_constantes>::='const''{'<conteudo_variavel>'}'';'  
+                        
+<codigosPrimitivos>::= <Id_struct>
+                     | <Acesso> 
+                     | <bloco_variavel>   
+                     
+
+
+
+
+
+
+
+
+
+
+
+
+
