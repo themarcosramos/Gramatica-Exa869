@@ -4,7 +4,7 @@
 
 "Name"    = 'Problema 2'
 "Version" = '1.0'
-"Author"  = 'Gabriel, Gustavo, Ianc, Marcos, Joimar, Victor'
+"Author"  = 'Gabriel, Gustavo, Ianc, Marcos, Joimar, Victor, Leandro'
 
 "Case Sensitive" = 'True'
                  
@@ -36,6 +36,18 @@ integerNumber = '-'?{Whitespace}*{Number}{Number}*
 !========================
 
 
+
+
+!DeVa = DeclaracaoVariavel
+!Or Origem
+!Va Variaveis
+!Val Variavel
+!Ti Tipo
+!Tity TipoTypedef
+!Ar array
+!Ma Matriz
+!Com 
+
            
 <DeclaracaoVariavel> ::= <Origem> '{' <Variaveis>
                       
@@ -45,24 +57,21 @@ integerNumber = '-'?{Whitespace}*{Number}{Number}*
        
 <Variavel>::= id <Array>
 
-
 <Array> ::= '['numero']' <Matriz>
          | '['id']' <Matriz>
-         |<DeclarouVariavel> 
+         |',' <Variavel>
+         | ';' <Variaveis>
+         | '}'';'
+
 
 <Matriz> ::= '['numero']' <DeclarouVariavel>
           | '['id']' <DeclarouVariavel>
-          |<DeclarouVariavel> 
+          |<DeclarouVariavel>  
 
-<DeclarouVariavel> ::= ',' <Variavel>
-                    | <Declarado>    
-
-<Declarado> ::= ';' <Variaveis>
-             | <VariaveisDeclaradas>
-
-<VariaveisDeclaradas> ::= '}'';' 
+ 
 <Comandos> ::= <DeclaracaoVariavel> <Comandos>
             |
+            
 <TipoTypdef>::= id
              
 
