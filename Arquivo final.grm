@@ -44,13 +44,7 @@ Comment Line = '//'
 
 <Boolean> ::= 'true' 
            | 'false'
-<tipo> ::= 'int'|'float'|'bool'|'string'
-!tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
-
        
-           
-!<PrimeiroSimbolo> ::= <DeclararVariavel><start><funcoes>
-
 
 <Origem> ::= 'var'
            | 'const'   
@@ -70,8 +64,13 @@ Comment Line = '//'
 ! Uteis
 !
 
-<Variavel> ::= id <VariavelX> <VariavelX>
+<Variavel> ::= id <AcessoArray> <AcessoArray>
             
+<AcessoArray> ::= '[' <NumeroOuVazio> ']'
+             |
+         
+<NumeroOuVazio> ::= numero
+          |   
 <Variaveis> ::= id <VariaveisX>
              
 <VariaveisX> ::= ',' <Variaveis>
@@ -152,7 +151,9 @@ Comment Line = '//'
 !Declaracao e chamada de funcao
 !==============================
 
-<Funcao> ::= 'function' <Tipo> Id '(' <Parametros> ')' '{'  <Bloco> '}'
+<Funcao> ::= 'function' <TipoRetorno> Id '(' <Parametros> ')' '{'  <BlocoRetorno> '}'
+          
+<TipoRetorno> ::= <Tipo><AcessoArray><AcessoArray>
             
 <ChamadaFuncaoEProcedimento> ::= Id '(' <Variaveis> ')' ';'
             
@@ -160,7 +161,7 @@ Comment Line = '//'
 ! Declaracao de Procedimento
 !===========================
 
-<Procedimento> ::= 'procedure' Id '(' <Parametros> ')' '{' <Bloco_sem_retorno> '}'
+<Procedimento> ::= 'procedure' Id '(' <Parametros> ')' '{' <Bloco> '}'
 
 !=======================
 ! Declarar varias Funcoes ou Procedimentos
@@ -176,7 +177,7 @@ Comment Line = '//'
 ! Utilidade da declaracao de funcao e procedimentos
 !---------------------------
 
-<Parametros> ::= <Parametro><ParametroX>
+<Parametros> ::= <Parametro><ParametrosX>
               |
               
     <ParametrosX> ::= ',' <Parametros>
@@ -232,7 +233,7 @@ Comment Line = '//'
                       | '--'
 
 
-<ExpressaoAritmetica> ::='<UnidadeAritmetica><OperadoresAritmeticos><UnidadeAritmetica>
+<ExpressaoAritmetica> ::= <UnidadeAritmetica><OperadoresAritmeticos><UnidadeAritmetica>
                        | '(' <ExpressaoAritmetica> ')'                    
   
 <UnidadeAritmetica> ::= Id
@@ -280,9 +281,9 @@ Comment Line = '//'
 ! Comando while
 !==============
 
-<WhileRetorno> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <BlocoRetorno> '}'
+<WhileRetorno> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' '{' <BlocoRetorno> '}'
 
-<While> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <Bloco> '}'
+<While> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' '{' <Bloco> '}'
 !===========
 ! Atribuicao
 !===========
