@@ -8,7 +8,7 @@
 
 "Case Sensitive" = 'True'
                  
-"Start Symbol"   = <Var>
+"Start Symbol"   = <Programa>
 
 {Id Head}        = {Letter} + [_]
 {Id Tail}        = {Id Head} + {Digit}
@@ -82,7 +82,21 @@ Comment Line = '//'
               | Id
 
 
+!
+! Programa
+!
 
+<Programa>::= <EscopoGlobal><Start><FuncoesOuProcedimentos>
+
+<EscopoGlobal> ::= <VarConstStruct><EscopoGlobalX>
+                |
+                
+<EscopoGlobalX> ::= ',' <EscopoGlobal>
+                 |
+                
+<VarConstStruct>::= <Var>
+                 | <Const>
+                 | <Struct>
 !==============================================
 ! Declaração de variáveis, constantes e structs
 !==============================================
@@ -133,13 +147,12 @@ Comment Line = '//'
 !=============
 <Start> ::= 'start' '{' <Bloco> '}'
 
-
-      
+    
 !==============================
 !Declaracao e chamada de funcao
 !==============================
 
-<Function> ::= 'function' <Tipo> '(' <Parametros> ')' '{'  <Bloco> '}'
+<Funcao> ::= 'function' <Tipo> Id '(' <Parametros> ')' '{'  <Bloco> '}'
             
 <ChamadaFuncaoEProcedimento> ::= Id '(' <Variaveis> ')' ';'
             
@@ -147,12 +160,17 @@ Comment Line = '//'
 ! Declaracao de Procedimento
 !===========================
 
-<Procedimento> ::= 'procedure' '(' <Parametros> ')' '{' <Bloco_sem_retorno> '}'
+<Procedimento> ::= 'procedure' Id '(' <Parametros> ')' '{' <Bloco_sem_retorno> '}'
 
 !=======================
 ! Declarar varias Funcoes ou Procedimentos
 !=======================
 
+<FuncaoOuProcedimento> ::= <Funcao>
+                        | <Procedimento>
+
+<FuncoesOuProcedimentos> ::= <FuncaoOuProcedimento><FuncoesOuProcedimentos>
+                          |
 
 !--------------------------
 ! Utilidade da declaracao de funcao e procedimentos
