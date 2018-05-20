@@ -8,94 +8,27 @@
 
 "Case Sensitive" = 'True'
                  
+"Start Symbol"   = <Var>
 
-{ID Head} = {Letter} + [_]
-{ID Tail} = {Letter} + [_] + {Digit}
-
-Id = {ID Head}{ID Tail}*
-   
-numero = '-'?{Whitespace}*{number}+ ('.'{number}+)?
-
-StringLiteral = '"'({Letter} | {Whitespace} | '\' {Printable})* '"'
-              
-integerNumber = '-'?{Whitespace}*{Number}{Number}*
-
-       
-
-<Origem> ::= 'var'
-           | 'const'   
-                              
-<Tipo>   ::= 'int'
-           | 'float'
-           | 'double'
-           | 'String'
-
-
-!========================
-! Declaração de variáveis
-!========================
-
-
-
-
-!DeVa = DeclaracaoVariavel
-!Or Origem
-!Va Variaveis
-!Val Variavel
-!Ti Tipo
-!Tity TipoTypedef
-!Ar array
-!Ma Matriz
-!Com 
-
-           
-<DeclaracaoVariavel> ::= <Origem> '{' <Variaveis>
-                      
-
-<Variaveis> ::= <Tipo> <Variavel>
-             | <TipoTypdef> <Variavel>
-       
-<Variavel>::= id <Array>
-
-<Array> ::= '['numero']' <Matriz>
-         | '['id']' <Matriz>
-         |',' <Variavel>
-         | ';' <Variaveis>
-         | ';''}'
-
-
-<Matriz> ::= '['numero']' <DeclarouVariavel>
-          | '['id']' <DeclarouVariavel>
-          |<DeclarouVariavel>  
-
- 
-<Comandos> ::= <DeclaracaoVariavel> <Comandos>
-            |
-            
-<TipoTypdef>::= id
-             
-
-
-!
-! coisas para eu ir analisando
-!
-
-
-
-! ----------------
-! Miranda
-! ----------------
-
-
-! -------------------------------------------------          
-!                       General purpose variables
-! -------------------------------------------------
-
-!{Letter} = [a-z][A-Z]
-!{Number} = [0-9]
+{Id Head}        = {Letter} + [_]
+{Id Tail}        = {Id Head} + {Digit}
+          
 {NoZeroNumber} = [123456789]
 
+
+
+
+!Id = {Letter}({Letter}|'_'|{Digit})*
+   
+integerNumber = '-'?{Whitespace}*{Digit}{Digit}*
                
+floatNumber = integerNumber'.'{Digit}+
+
+StringLiteral = '"'({Letter} | {Whitespace} | '\' {Printable})* '"'
+
+Id = {ID Head}{ID Tail}*
+
+
 ! -------------------------------------------------
 !                          Comment Delimiters
 ! -------------------------------------------------
@@ -109,75 +42,187 @@ Comment Line = '//'
 ! -------------------------------------------------
    
 
-boolean = 'true' | 'false'
-tipo = 'int'|'float'|'bool'|'string'
-tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
+<boolean> ::= 'true' | 'false'
+<tipo> ::= 'int'|'float'|'bool'|'string'
+!tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
 
-! -------------------------------------------------                 
-!                        Transitions define code
-! -------------------------------------------------
+       
+           
+!<PrimeiroSimbolo> ::= <DeclararVariavel><start><funcoes>
 
 
-! Estruturas auxiliares
-<Define_var> ::= tipo id 
-              | tipo id <Define_var> 
-              | ';' tipo id <Define_var> 
-              | tipo id tamanho_vet_mat <Define_var> 
-              | ';' tipo id tamanho_vet_mat <Define_var> 
+<Origem> ::= 'var'
+           | 'const'   
+                              
+<Tipo>   ::= 'int'
+           | 'float'
+           | 'double'
+           | 'String'
+           | Id
+
+<TiposLiteral> ::= integerNumber
+                | floatNumber
+                | StringLiteral
+                | Id
+!
+! Uteis
+!
+
+<AcessarVariavel> ::= id <AcessarVariavelX> <AcessarVariavelX>
+
+<numeroOuId> ::= integerNumber
+              | Id
+
+
+
+!==============================================
+! Declaração de variáveis, constantes e structs
+!==============================================
+
+<Const> ::= 'const' '{' <Variaveis> '}'
+
+<Var> ::= 'var' '{' <Variaveis> '}'
+
+<Struct> ::= 'struct' Id <structX>
+          
+<Variaveis> ::= <Variavel> <VariaveisX> ';'
+             
+<Variavel> ::= <Tipo> <VariavelX>
+            
+<SerieIdentificadores> ::= Id <Atribuir> <SerieIdentificadoresX>
+                                 
+!----------------------------------------------------------------------------
+! Estruturas auxiliares para a criacao de variaveis, constantes e structs
+!-----------------------------------------------------------------------------
+    <structX> ::= '{' <Variaveis> '}' 'typedef' id
+               | 'extends' id '{' <Variaveis> '}' 'typedef' id
+            
+    <VariaveisX> ::= ',' <Variaveis>
+                  | 
+
+    <VariavelX> ::= <SerieIdentificadores>
+                 | '[' <VariavelXX>
+
+    <VariavelXX> ::= integerNumber <VariavelXXX>
+
+    <VariavelXXX> ::= ']' <VariavelXXXX>
+
+    <VariavelXXXX> ::= <SerieIdentificadores>
+                | '[' integerNumber ']' <SerieIdentificadores>
+
+    <Atribuir>::= '='  <TiposLiteral>
+               |
+                        
+    <SerieIdentificadoresX> ::= ',' <SerieIdentificadores>              
+                             |
+                        
+    <AcessarVariavelX> ::= '[' <numeroOuId> ']'
+                        |
+                        
+!=============
+! Função start
+!=============
+<Start> ::= 'start' <Block>
+
+<Bloco> ::= 'aaaaaaa'
+      
+!====================
+!Declaracao de funcao
+!====================         
+
+<Function> ::= 'function' <Tipo> '(' <Parametros> ')' '{'  <Bloco> '}'
+            
+!===========================
+! Declaracao de Procedimento
+!===========================
+
+<Procedure> ::= 'procedure' '(' <Parametros> ')' '{' <Bloco_sem_retorno> '}'
+
+!--------------------------
+! Utilidade da declaracao de funcao e procedimentos
+!---------------------------
+
+<Parametros> ::= <Parametro><ParametroX>
               |
+              
+    <ParametrosX> ::= ',' <Parametros>
+                   |
 
-<Extends> ::= 'extends' id
-
-<Return> ::= 'return' id 
+<Parametro> ::= <Tipo> Id
+             
+!FATORAR ISSO A ESQUERDA!!!!!!!!!!!
+<Returno> ::= 'return' Id 
           | 'return' integerNumber 
           |  'return' floatNumber 
           | 'return' string 
-          | 'return' boolean
-
-!<Method_scope> ::=
-!<Logic_operation> ::=
-!<Aritmetic_operation> ::=
-!<Relational_operation> ::=
-<Identifier> ::= 'int' | 'float'
-            
-! Armazenamento de dados (Variável, Sctruct, Const, Typedef)
-<Variable> ::= 'var' '{' <Define_var> '}'
-
-<Struct> ::= 'struct' id '{' <Variavel> '}'| 'struct' id '{' <Variavel> <Extends> '}'   
-
-<Const> ::= 'const' '{' <Define_var> '}'
-
-<TypeDef> ::= 'typedef' id '{' <Struct> '}'
-           
-!Atuadores (Funções e procedimentos)
-<Function> ::= 'function' tipo '(' <Lista_Parametros> ')' '{'  <Return> '}'
-
-<Procedure> ::= 'procedure' '(' <Lista_Parametros> ')' '{' <Return> '}'
-            
-
-
-
-! =======
-
-               
-Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'  
+          | 'return' <boolean>
         
-              
-!----- PRINT -------!                                                          
-<cmd_Print> ::= 'print' '(' <print_access> ')' ';'       
-<print_access> ::= StringLiteral <print_aux> | Id_acesso <print_aux>  
-<print_aux> ::= ',' <print_access> |                 
 
-!----- SCAN -------!
-<cmd_Scan> ::= 'scan' '(' Id_acesso <var_access>')' ';' 
-<var_access> ::= ',' Id_acesso <var_access> |
-              
-<Grammar> ::= <cmd_Print><Grammar> | <cmd_Scan><Grammar> |           
-           
+!=============
+! Print e Scan
+!=============
 
+<Print> ::= 'print' '(' StringLiteral<PrintX>
+              
+    <PrintX> ::= ',' <SerieIdentificadores> ')' ';'
+              | ')' ';'
+              
+<Scan> ::= 'scan' '(' StringLiteral<PrintX>
+
+!==============================================
+! Operadores Relacionais, Lógicos e Aritméticos
+!==============================================
+
+<OperadoresRelacionais> ::= '!='
+                         | '='<Igual>
+                         | '<'<Igual>
+                         | '>'<Igual>
+                         
+<Igual>::= '='
+        |
+        
+<OperadoresLogicos> ::= '!'
+                     | '&&'
+                     | '||'
+                     
+
+<OperadoresAritmeticos> ::= '+'<Soma>
+                         | '-' <Subtracao>
+                         | '*'
+                         | '/'
+                         
+<Soma>::= '+'
+       |
+
+<Subtracao>::= '-'
+            |
+
+!===========
+! Comando if
+!===========
+
+<If> ::= 'if' '(' <LogicaOuRelacional> ')' 'then' '{' <Bloco> '}' <Else>
+      
+<Else>::= '{' <Bloco> '}'
+       |
+
+<LogicaOuRelacional> ::= <OperadoresRelacionais>
+                      | <OperadoresLogicos>
+
+!==============
+! Comando while
+!==============
+
+<While> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <Block> '}'
+
+!===========
+! 
+!===========
 
 ! =========================
-      
+<Matriz> ::= 'a'
+          
+<DeclarouVariavel> ::= 'b'
 
 
 !<Declaracao_Funcao>  ::= 'function' <Id_Funcao> '(' <Lista_Parametros> ')' '{'<instrucao> ';''}'
@@ -229,10 +274,10 @@ Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'
 <comandoScan> ::= 'scan' '('<ListaId>')' ';'
 <comandoPrint> ::= 'print' '(' <ListaExepressao>')' ';' 
                    
-<comandoArry> ::= '['numero']' <Matriz> | '['id']' <Matriz>
+<comandoArry> ::= '['integerNumber']' <Matriz> | '['id']' <Matriz>
                |<DeclarouVariavel> 
                
-<comandoMatriz>::='['numero']' <DeclarouVariavel>| '['id']' <DeclarouVariavel>
+<comandoMatriz>::='['integerNumber']' <DeclarouVariavel>| '['id']' <DeclarouVariavel>
                   |<DeclarouVariavel> 
     
 
@@ -270,7 +315,7 @@ Id_acesso =  Id | Id '['{Digit}+']' | Id '['{Digit}+']''['{Digit}+']'
 <Acesso>::= <Declaracoes_variaveis>'.'<conteudo_variavel>'=' <valor> ';'
          
 <valor>::= <Expressao>
-          |  numero  
+          |  integerNumber  
           |  
           
 <Expressao_Boolean>::= <Declaracoes_variaveis>'=='<Declaracoes_variaveis>';'
