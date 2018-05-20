@@ -61,7 +61,7 @@ integerNumber = '-'?{Whitespace}*{Number}{Number}*
          | '['id']' <Matriz>
          |',' <Variavel>
          | ';' <Variaveis>
-         | '}'';'
+         | ';''}'
 
 
 <Matriz> ::= '['numero']' <DeclarouVariavel>
