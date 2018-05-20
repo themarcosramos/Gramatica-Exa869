@@ -42,7 +42,8 @@ Comment Line = '//'
 ! -------------------------------------------------
    
 
-<boolean> ::= 'true' | 'false'
+<Boolean> ::= 'true' 
+           | 'false'
 <tipo> ::= 'int'|'float'|'bool'|'string'
 !tamanho_vet_mat = '[' {NoZeroNumber} ']' | '[' {NoZeroNumber} ']' '[' {NoZeroNumber} ']'
 
@@ -64,11 +65,18 @@ Comment Line = '//'
                 | floatNumber
                 | StringLiteral
                 | Id
+                | <Boolean>
 !
 ! Uteis
 !
 
-<AcessarVariavel> ::= id <AcessarVariavelX> <AcessarVariavelX>
+<Variavel> ::= id <VariavelX> <VariavelX>
+            
+<Variaveis> ::= id <VariaveisX>
+             
+<VariaveisX> ::= ',' <Variaveis>
+              |
+
 
 <numeroOuId> ::= integerNumber
               | Id
@@ -89,13 +97,13 @@ Comment Line = '//'
              
 <Variavel> ::= <Tipo> <VariavelX>
             
-<SerieIdentificadores> ::= Id <Atribuir> <SerieIdentificadoresX>
+<SerieIdentificadores> ::= Id <AtribuirAVariavel> <SerieIdentificadoresX>
                                  
 !----------------------------------------------------------------------------
 ! Estruturas auxiliares para a criacao de variaveis, constantes e structs
 !-----------------------------------------------------------------------------
-    <structX> ::= '{' <Variaveis> '}' 'typedef' id
-               | 'extends' id '{' <Variaveis> '}' 'typedef' id
+    <structX> ::= '{' <Variaveis> '}' 'typedef' id ';'
+               | 'extends' id '{' <Variaveis> '}' 'typedef' id ';'
             
     <VariaveisX> ::= ',' <Variaveis>
                   | 
@@ -110,13 +118,14 @@ Comment Line = '//'
     <VariavelXXXX> ::= <SerieIdentificadores>
                 | '[' integerNumber ']' <SerieIdentificadores>
 
-    <Atribuir>::= '='  <TiposLiteral>
-               |
-                        
+
     <SerieIdentificadoresX> ::= ',' <SerieIdentificadores>              
                              |
+                             
+<AtribuirAVariavel>::= '='  <Valoravel>
+                    |
                         
-    <AcessarVariavelX> ::= '[' <numeroOuId> ']'
+    <VariavelX> ::= '[' <numeroOuId> ']'
                         |
                         
 !=============
@@ -124,7 +133,7 @@ Comment Line = '//'
 !=============
 <Start> ::= 'start' <Block>
 
-<Bloco> ::= 'aaaaaaa'
+
       
 !====================
 !Declaracao de funcao
@@ -151,7 +160,7 @@ Comment Line = '//'
 <Parametro> ::= <Tipo> Id
              
 !FATORAR ISSO A ESQUERDA!!!!!!!!!!!
-<Returno> ::= 'return' Id 
+<Retorno> ::= 'return' Id 
           | 'return' integerNumber 
           |  'return' floatNumber 
           | 'return' string 
@@ -164,10 +173,13 @@ Comment Line = '//'
 
 <Print> ::= 'print' '(' StringLiteral<PrintX>
               
-    <PrintX> ::= ',' <SerieIdentificadores> ')' ';'
+    <PrintX> ::= ',' <Valoraveis> ')' ';'
               | ')' ';'
               
-<Scan> ::= 'scan' '(' StringLiteral<PrintX>
+<Scan> ::= 'scan' '(' StringLiteral<ScanX>
+        
+    <ScanX> ::= ',' <Variaveis> ')' ';'
+             | ')' ';'
 
 !==============================================
 ! Operadores Relacionais, Lógicos e Aritméticos
@@ -186,38 +198,131 @@ Comment Line = '//'
                      | '||'
                      
 
-<OperadoresAritmeticos> ::= '+'<Soma>
-                         | '-' <Subtracao>
+<OperadoresAritmeticos> ::= '+'
+                         | '-'
                          | '*'
                          | '/'
                          
-<Soma>::= '+'
-       |
+<OperadoresIncrementos> ::= '++'
+                      | '--'
 
-<Subtracao>::= '-'
-            |
+
+<ExpressaoAritmetica> ::='<UnidadeAritmetica><OperadoresAritmeticos><UnidadeAritmetica>
+                       | '(' <ExpressaoAritmetica> ')'                    
+  
+<UnidadeAritmetica> ::= Id
+                     | integerNumber
+                     | floatNumber
+                     | <ChamadaFuncao>
+                     
+
+<ExpressaoRelacional> ::= <UnidadeRelacional><OperadoresRelacionais><UnidadeRelacional>
+                       | '(' <ExpressaoRelacional> ')' 
+                       
+<UnidadeRelacional> ::= <TiposLiteral>
+                     | <ChamadaFuncao>
+                     | <ExpressaoAritmetica>
+
+<ExpressaoLogica> ::= <UnidadeLogica><OperadoresLogicos><UnidadeLogica>
+                   | '(' <ExpressaoLogica> ')'
+
+
+<UnidadeLogica> ::= <Boolean>
+                 | <ChamadaFuncao>
+                 | <ExpressaoRelacional>
+
+
 
 !===========
 ! Comando if
 !===========
 
-<If> ::= 'if' '(' <LogicaOuRelacional> ')' 'then' '{' <Bloco> '}' <Else>
+<IfRetorno> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' '{' <BlocoRetorno> '}' <Else>
+      
+<ElseRetorno>::= '{' <BlocoRetorno> '}'
+       |
+       
+<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' '{' <Bloco> '}' <Else>
       
 <Else>::= '{' <Bloco> '}'
        |
 
-<LogicaOuRelacional> ::= <OperadoresRelacionais>
-                      | <OperadoresLogicos>
+<ExpressaoLogicaOuRelacional> ::= <ExpressaoLogica>
+                      | <ExpressaoRelacional>
 
 !==============
 ! Comando while
 !==============
 
-<While> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <Block> '}'
+<WhileRetorno> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <BlocoRetorno> '}'
 
+<While> ::= 'while' '(' <LogicaOuRelacional> ')' '{' <Bloco> '}'
 !===========
-! 
+! Atribuicao
 !===========
+
+!atribuir funcao tbm
+<Atribuicao> ::= Id <Atribuir> ';'
+              
+
+<Atribuir> ::= '=' <Valoravel>
+
+
+<Valoravel> ::= <TiposLiteral>
+             | <ExpressaoAritmetica>
+             | <ChamadaFuncao>
+             | <ExpressaoLogica>
+             | <ExpressaoRelacional>
+             
+<Valoraveis> ::= <Valoravel><ValoraveisX>
+              
+<ValoraveisX> ::= ',' <Valoraveis>
+               |
+
+!================================================
+! Bloco Retorno
+! Bloco para os procedimentos que aceitam retorno
+!================================================
+
+<BlocoRetorno> ::= <ComandosRetorno>
+         
+<ComandosRetorno> ::= <ComandoRetorno><ComandosRetorno>
+            |
+            
+<ComandoRetorno> ::= <Var>
+           | <Struct>
+           | <Atribuicao>
+           | <If>
+           | <While>
+           | <Retorno>
+           |
+
+!==================
+! Bloco sem retorno
+!==================
+
+<Bloco> ::= <Comandos>
+         
+<Comandos> ::= <Comando><Comandos>
+            |
+            
+<Comando> ::= <Var>
+           | <Struct>
+           | <Atribuicao>
+           | <If>
+           | <While>
+           |
+
+
+
+
+
+
+
+
+
+
+
 
 ! =========================
 <Matriz> ::= 'a'
