@@ -20,9 +20,8 @@
 
 !Id = {Letter}({Letter}|'_'|{Digit})*
    
-integerNumber = '-'?{Whitespace}*{Digit}{Digit}*
+integerNumber = '-'?{Whitespace}*{Digit}{Digit}*('.'{Digit}+)?
                
-floatNumber = integerNumber'.'{Digit}+
 
 StringLiteral = '"'({Letter} | {Whitespace} | '\' {Printable})* '"'
 
@@ -53,7 +52,6 @@ Comment Line = '//'
            | Id
 
 <TiposLiteral> ::= integerNumber
-                | floatNumber
                 | StringLiteral
                 | <Variavel>
                 | <Boolean>
@@ -69,6 +67,7 @@ Comment Line = '//'
 <NumeroOuVazio> ::= integerNumber
           |   
 <Variaveis> ::= <Variavel> <VariaveisX>
+             |
              
 <VariaveisX> ::= ',' <Variaveis>
               |
@@ -213,7 +212,7 @@ Comment Line = '//'
 !==============================================
 
 <OperadoresRelacionais> ::= '!='
-                         | '='<Igual>
+                         | '=='
                          | '<'<Igual>
                          | '>'<Igual>
                          
@@ -297,10 +296,11 @@ Comment Line = '//'
 !===========
 
 !atribuir funcao tbm
-<Atribuicao> ::= Id <Atribuir> ';'
+<Atribuicao> ::= <Variavel> <Atribuir> ';'
               
 
 <Atribuir> ::= '=' <Valoravel>
+            | <OperadoresIncrementos>
 
 
 <Valoravel> ::= <TiposLiteral>
@@ -362,6 +362,7 @@ Comment Line = '//'
            | <Var>
            | <Struct>
            | <Atribuicao>
+           | <Retorno>
            | <Print>
            | <Scan>
            | <ChamadaFuncaoEProcedimento>
