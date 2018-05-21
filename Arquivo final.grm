@@ -8,7 +8,7 @@
 
 "Case Sensitive" = 'True'
                  
-"Start Symbol"   = <Bloco>
+"Start Symbol"   = <Programa>
 
 {Id Head}        = {Letter} + [_]
 {Id Tail}        = {Id Head} + {Digit}
@@ -84,6 +84,7 @@ Comment Line = '//'
 
 <Programa>::= <EscopoGlobal><Start><FuncoesOuProcedimentos>
 
+
 <EscopoGlobal> ::= <VarConstStruct><EscopoGlobalX>
                 |
                 
@@ -97,32 +98,33 @@ Comment Line = '//'
 ! Declaração de variáveis, constantes e structs
 !==============================================
 
-<Const> ::= 'const' <BlocoDeclararVariaveis>
+<Const> ::= 'const' '{' <DeclararVariaveis> '}'
 
-<Var> ::= 'var' <BlocoDeclararVariaveis>
+<Var> ::= 'var'  '{' <DeclararVariaveis> '}'
 
 
 <BlocoDeclararVariaveis> ::= '{' <DeclararVariaveis> '}' 
 
 <Struct> ::= 'struct' Id <structX>
           
-<DeclararVariaveis> ::= <DeclararVariavel> <DeclararVariaveisX> ';'
+<DeclararVariaveis> ::= <DeclararVariavel> <DeclararVariaveis>
+                     |
              
-<DeclararVariavel> ::= <Tipo> <DeclararVariavelX>
+<DeclararVariavel> ::= <Tipo> <DeclararVariavelX> ';'
             
 <SerieIdentificadores> ::= Id <AtribuirAVariavel> <SerieIdentificadoresX>
                                  
 !----------------------------------------------------------------------------
 ! Estruturas auxiliares para a criacao de variaveis, constantes e structs
 !-----------------------------------------------------------------------------
-    <structX> ::= <BlocoDeclararVariaveis> 'typedef' id ';'
-               | 'extends' id <BlocoDeclararVariaveis> 'typedef' id ';'
+    <structX> ::= '{' <DeclararVariaveis> '}' 'typedef' id ';'
+               | 'extends' id '{' <DeclararVariaveis> '}' 'typedef' id ';'
             
-    <DeclararVariaveisX> ::= ',' <DeclararVariaveis>
-                  | 
+!    <DeclararVariaveisX> ::= <DeclararVariaveis>
+!                  | 
 
     <DeclararVariavelX> ::= <SerieIdentificadores>
-                 | '[' <DeclararVariavelXX>
+                 | <AcessoArray>
 
     <DeclararVariavelXX> ::= integerNumber <DeclararVariavelXXX>
 
@@ -170,6 +172,7 @@ Comment Line = '//'
 
 <FuncaoOuProcedimento> ::= <Funcao>
                         | <Procedimento>
+                        
 
 <FuncoesOuProcedimentos> ::= <FuncaoOuProcedimento><FuncoesOuProcedimentos>
                           |
@@ -199,7 +202,7 @@ Comment Line = '//'
     <PrintX> ::= ',' <Valoraveis> ')' ';'
               | ')' ';'
               
-<Scan> ::= 'scan' '(' StringLiteral<ScanX>
+<Scan> ::= 'scan' '('<ScanX>
         
     <ScanX> ::= ',' <Variaveis> ')' ';'
              | ')' ';'
@@ -250,8 +253,7 @@ Comment Line = '//'
                    | '(' <ExpressaoLogica> ')'
 
 
-<UnidadeLogica> ::= <Boolean>
-                 | Id
+<UnidadeLogica> ::= <TiposLiteral>
                  | <ChamadaFuncaoEProcedimento>
                  | <ExpressaoRelacional>
 
@@ -266,14 +268,14 @@ Comment Line = '//'
 !<ElseRetorno>::=  <BlocoRetorno> 
 !       |
        
-<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <IfX>
+<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando> <Else>
  
 !<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando>
 !      | 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando Then> 'else' <Comando>
      
       
-<IfX> ::= <Comando>
-       | <Comando Then> <Else>
+!<IfX> ::= <Comando>
+!       | <Comando Then> <Else>
       
 <Else>::= 'else' <Comando> 
        |
@@ -288,7 +290,7 @@ Comment Line = '//'
 
 !<WhileRetorno> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' <BlocoRetorno> 
 
-<While> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')'  <Bloco> 
+<While> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')'  <Comando> 
 !===========
 ! Atribuicao
 !===========
@@ -354,7 +356,14 @@ Comment Line = '//'
 !           |
 
 <Comando> ::= <If>
+           | <While>
            | <Bloco>
+           | <Var>
+           | <Struct>
+           | <Atribuicao>
+           | <Print>
+           | <Scan>
+           | <ChamadaFuncaoEProcedimento>
          
 
 
