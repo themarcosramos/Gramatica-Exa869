@@ -8,7 +8,7 @@
 
 "Case Sensitive" = 'True'
                  
-"Start Symbol"   = <Programa>
+"Start Symbol"   = <Bloco>
 
 {Id Head}        = {Letter} + [_]
 {Id Tail}        = {Id Head} + {Digit}
@@ -45,9 +45,6 @@ Comment Line = '//'
 <Boolean> ::= 'true' 
            | 'false'
        
-
-<Origem> ::= 'var'
-           | 'const'   
                               
 <Tipo>   ::= 'int'
            | 'float'
@@ -100,9 +97,12 @@ Comment Line = '//'
 ! Declaração de variáveis, constantes e structs
 !==============================================
 
-<Const> ::= 'const' '{' <DeclararVariaveis> '}'
+<Const> ::= 'const' <BlocoDeclararVariaveis>
 
-<Var> ::= 'var' '{' <DeclararVariaveis> '}'
+<Var> ::= 'var' <BlocoDeclararVariaveis>
+
+
+<BlocoDeclararVariaveis> ::= '{' <DeclararVariaveis> '}' 
 
 <Struct> ::= 'struct' Id <structX>
           
@@ -115,8 +115,8 @@ Comment Line = '//'
 !----------------------------------------------------------------------------
 ! Estruturas auxiliares para a criacao de variaveis, constantes e structs
 !-----------------------------------------------------------------------------
-    <structX> ::= '{' <DeclararVariaveis> '}' 'typedef' id ';'
-               | 'extends' id '{' <DeclararVariaveis> '}' 'typedef' id ';'
+    <structX> ::= <BlocoDeclararVariaveis> 'typedef' id ';'
+               | 'extends' id <BlocoDeclararVariaveis> 'typedef' id ';'
             
     <DeclararVariaveisX> ::= ',' <DeclararVariaveis>
                   | 
@@ -138,20 +138,20 @@ Comment Line = '//'
 <AtribuirAVariavel>::= '='  <Valoravel>
                     |
                         
-    <DeclararVariavelX> ::= '[' <numeroOuId> ']'
-                        |
+!    <DeclararVariavelX> ::= '[' <numeroOuId> ']'
+!                        |
                         
 !=============
 ! Função start
 !=============
-<Start> ::= 'start' '{' <Bloco> '}'
+<Start> ::= 'start' <Bloco>
 
     
 !==============================
 !Declaracao e chamada de funcao
 !==============================
 
-<Funcao> ::= 'function' <TipoRetorno> Id '(' <Parametros> ')' '{'  <BlocoRetorno> '}'
+<Funcao> ::= 'function' <TipoRetorno> Id '(' <Parametros> ')'  <Bloco> 
           
 <TipoRetorno> ::= <Tipo><AcessoArray><AcessoArray>
             
@@ -161,10 +161,11 @@ Comment Line = '//'
 ! Declaracao de Procedimento
 !===========================
 
-<Procedimento> ::= 'procedure' Id '(' <Parametros> ')' '{' <Bloco> '}'
+<Procedimento> ::= 'procedure' Id '(' <Parametros> ')'  <Bloco> 
 
 !=======================
 ! Declarar varias Funcoes ou Procedimentos
+!Essa parte eh para o corpo do programa
 !=======================
 
 <FuncaoOuProcedimento> ::= <Funcao>
@@ -185,12 +186,8 @@ Comment Line = '//'
 
 <Parametro> ::= <Tipo> Id
              
-!FATORAR ISSO A ESQUERDA!!!!!!!!!!!
-<Retorno> ::= 'return' Id 
-          | 'return' integerNumber 
-          |  'return' floatNumber 
-          | 'return' string 
-          | 'return' <boolean>
+
+<Retorno> ::= 'return' <Valoravel>
         
 
 !=============
@@ -264,15 +261,23 @@ Comment Line = '//'
 ! Comando if
 !===========
 
-<IfRetorno> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' '{' <BlocoRetorno> '}' <Else>
+!<IfRetorno> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <BlocoRetorno> <ElseRetorno>
       
-<ElseRetorno>::= '{' <BlocoRetorno> '}'
+!<ElseRetorno>::=  <BlocoRetorno> 
+!       |
+       
+<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <IfX>
+ 
+!<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando>
+!      | 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando Then> 'else' <Comando>
+     
+      
+<IfX> ::= <Comando>
+       | <Comando Then> <Else>
+      
+<Else>::= 'else' <Comando> 
        |
        
-<If> ::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' '{' <Bloco> '}' <Else>
-      
-<Else>::= '{' <Bloco> '}'
-       |
 
 <ExpressaoLogicaOuRelacional> ::= <ExpressaoLogica>
                       | <ExpressaoRelacional>
@@ -281,9 +286,9 @@ Comment Line = '//'
 ! Comando while
 !==============
 
-<WhileRetorno> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' '{' <BlocoRetorno> '}'
+!<WhileRetorno> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' <BlocoRetorno> 
 
-<While> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')' '{' <Bloco> '}'
+<While> ::= 'while' '(' <ExpressaoLogicaOuRelacional> ')'  <Bloco> 
 !===========
 ! Atribuicao
 !===========
@@ -311,37 +316,51 @@ Comment Line = '//'
 ! Bloco para os procedimentos que aceitam retorno
 !================================================
 
-<BlocoRetorno> ::= <ComandosRetorno>
+!<BlocoRetorno> ::= '{' <ComandosRetorno> '}'
          
-<ComandosRetorno> ::= <ComandoRetorno><ComandosRetorno>
-            |
+!<ComandosRetorno> ::= <ComandoRetorno><ComandosRetorno>
+!            |
             
-<ComandoRetorno> ::= <Var>
-           | <Struct>
-           | <Atribuicao>
-           | <IfRetorno>
-           | <WhileRetorno>
-           | <ChamadaFuncaoEProcedimento>
-           | <Retorno>
-           |
+!<ComandoRetorno> ::= <Var>
+!           | <Struct>
+!           | <Atribuicao>
+!           | <IfRetorno>
+!           | <WhileRetorno>
+!           | <ChamadaFuncaoEProcedimento>
+!           | <Print>
+!           | <Scan>
+!           | <Retorno>
+!           |
 
 !==================
 ! Bloco sem retorno
 !==================
 
-<Bloco> ::= <Comandos>
+
+<Bloco> ::= '{' <Comandos> '}'
          
 <Comandos> ::= <Comando><Comandos>
             |
             
-<Comando> ::= <Var>
-           | <Struct>
-           | <Atribuicao>
-           | <If>
-           | <While>
-           | <ChamadaFuncaoEProcedimento>
-           |
+!<Comando> ::= <Var>
+!           | <Struct>
+!           | <Atribuicao>
+!           | <If>
+!           | <While>
+!           | <Print>
+!           | <Scan>
+!           | <ChamadaFuncaoEProcedimento>
+!           | <Bloco>
+!           |
 
+<Comando> ::= <If>
+           | <Bloco>
+         
+
+
+              
+<Comando Then>::= 'if' '(' <ExpressaoLogicaOuRelacional> ')' 'then' <Comando Then> 'else' <Comando Then>
+               | <Bloco>
 
 
 
