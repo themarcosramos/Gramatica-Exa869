@@ -63,12 +63,12 @@ Comment Line = '//'
 
 <Variavel> ::= id <AcessoArray> <AcessoArray>
             
-<AcessoArray> ::= '[' <NumeroOuVazio> ']'
+<AcessoArray> ::= '[' <NumeroOuId> ']'
              |
          
-<NumeroOuVazio> ::= numero
+<NumeroOuVazio> ::= integerNumber
           |   
-<Variaveis> ::= id <VariaveisX>
+<Variaveis> ::= <Variavel> <VariaveisX>
              
 <VariaveisX> ::= ',' <Variaveis>
               |
@@ -76,6 +76,7 @@ Comment Line = '//'
 
 <numeroOuId> ::= integerNumber
               | Id
+              |
 
 
 !
@@ -124,7 +125,7 @@ Comment Line = '//'
 !                  | 
 
     <DeclararVariavelX> ::= <SerieIdentificadores>
-                 | <AcessoArray>
+                 | <AcessoArray><AcessoArray> <SerieIdentificadores>
 
     <DeclararVariavelXX> ::= integerNumber <DeclararVariavelXXX>
 
@@ -204,7 +205,7 @@ Comment Line = '//'
               
 <Scan> ::= 'scan' '('<ScanX>
         
-    <ScanX> ::= ',' <Variaveis> ')' ';'
+    <ScanX> ::= <Variaveis> ')' ';'
              | ')' ';'
 
 !==============================================
