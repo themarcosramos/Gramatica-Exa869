@@ -110,9 +110,9 @@ Comment Line = '//'
 <DeclararVariaveis> ::= <DeclararVariavel> <DeclararVariaveis>
                      |
              
-<DeclararVariavel> ::= <Tipo> <DeclararVariavelX> ';'
+<DeclararVariavel> ::= <Tipo> <SerieIdentificadores> ';'
             
-<SerieIdentificadores> ::= Id <AtribuirAVariavel> <SerieIdentificadoresX>
+<SerieIdentificadores> ::= Id <AcessoArray><AcessoArray> <AtribuirAVariavel> <SerieIdentificadoresX>
                                  
 !----------------------------------------------------------------------------
 ! Estruturas auxiliares para a criacao de variaveis, constantes e structs
@@ -190,7 +190,7 @@ Comment Line = '//'
 <Parametro> ::= <Tipo> Id
              
 
-<Retorno> ::= 'return' <Valoravel>
+<Retorno> ::= 'return' <Valoravel> ';'
         
 
 !=============
